@@ -1,0 +1,9 @@
+{
+    "terminal.integrated.env.windows": {
+        "PATH": "C:\\Users\\Jorge\\.platformio\\penv\\Scripts;C:\\Users\\Jorge\\.platformio\\penv;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files\\MATLAB\\R2018b\\bin;C:\\Users\\Jorge\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Python35;C:\\Python35\\Lib;C:\\Python35\\DLLs;C:\\Python35\\Lib\\lib-tk;C:\\Python35\\tcl;;C:\\Users\\Jorge\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files\\MATLAB\\R2018b\\bin;C:\\Users\\Jorge\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Python35;C:\\Python35\\Lib;C:\\Python35\\DLLs;C:\\Python35\\Lib\\lib-tk;C:\\Python35\\tcl;;C:\\Users\\Jorge\\AppData\\Local\\Programs\\Microsoft VS Code\\bin",
+        "PLATFORMIO_CALLER": "vscode"
+    },
+    "files.associations": {
+        "gpio.h": "c"
+    }
+}
