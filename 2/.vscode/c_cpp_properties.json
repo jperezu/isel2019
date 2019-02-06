@@ -17,8 +17,8 @@
                 "C:/Users/Jorge/.platformio/packages/framework-esp8266-rtos-sdk/include/json",
                 "C:/Users/Jorge/.platformio/packages/framework-esp8266-rtos-sdk/include/openssl",
                 "C:/Users/Jorge/.platformio/packages/tool-unity",
-                "c:/Users/Jorge/Documents/PlatformIO/Projects/190202-122323-esp8266-rtos-sdk-blink/include",
-                "c:/Users/Jorge/Documents/PlatformIO/Projects/190202-122323-esp8266-rtos-sdk-blink/src",
+                "c:/Users/Jorge/Documents/PlatformIO/Projects/2/include",
+                "c:/Users/Jorge/Documents/PlatformIO/Projects/2/src",
                 ""
             ],
             "browse": {
@@ -38,8 +38,8 @@
                     "C:/Users/Jorge/.platformio/packages/framework-esp8266-rtos-sdk/include/json",
                     "C:/Users/Jorge/.platformio/packages/framework-esp8266-rtos-sdk/include/openssl",
                     "C:/Users/Jorge/.platformio/packages/tool-unity",
-                    "c:/Users/Jorge/Documents/PlatformIO/Projects/190202-122323-esp8266-rtos-sdk-blink/include",
-                    "c:/Users/Jorge/Documents/PlatformIO/Projects/190202-122323-esp8266-rtos-sdk-blink/src",
+                    "c:/Users/Jorge/Documents/PlatformIO/Projects/2/include",
+                    "c:/Users/Jorge/Documents/PlatformIO/Projects/2/src",
                     ""
                 ]
             },
@@ -58,6 +58,5 @@
             "cppStandard": "c++11",
             "compilerPath": "C:/Users/Jorge/.platformio/packages/toolchain-xtensa/bin/xtensa-lx106-elf-gcc.exe -mlongcalls -mtext-section-literals"
         }
-    ],
-    "version": 4
+    ]
 }
