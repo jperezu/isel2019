@@ -52,9 +52,9 @@ void task_blink(void* ignore)
 
     while(true) {
     	GPIO_OUTPUT_SET(2, 0);
-        vTaskDelayUntil(&xLastWakeTime, 1000/portTICK_RATE_MS);
+        vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
     	GPIO_OUTPUT_SET(2, 1);
-        vTaskDelayUntil(&xLastWakeTime, 1000/portTICK_RATE_MS);
+        vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
     }
 
     vTaskDelete(NULL);
