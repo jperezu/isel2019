@@ -78,7 +78,7 @@ void user_init(void){
      xTaskCreate(&task_morse, "morse", 2048, NULL, 1, NULL);
 }
 
-/* Devuelve la correspondencia en Morse del caracter c */
+/* Return Morse value of char c */
 const char* morse (int c){
     static const char* morse_ch[] = {
         "._",     //A
@@ -124,7 +124,7 @@ const char* morse (int c){
     return morse_ch[c - 'a'];
 }
 
-/* Copia en buf la version en Morse del mensaje str, con un limite de n caracteres*/
+/* Copy n first characters of str morse codification in buf*/
 char * str2morse (char *buf ,  int n, const char* str){
 
     while (n > 0 && *str) {
@@ -147,7 +147,7 @@ char * str2morse (char *buf ,  int n, const char* str){
 
 }
 
-/*Envia el mensaje msg ya codificadp en Morse, encendiendo y apagando el LED */
+/*Send morse msg, turning on and off LED */
 int morse_send (const char* msg){
 
     portTickType xLastWakeTime;
