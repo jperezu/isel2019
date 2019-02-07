@@ -1,2 +1,2 @@
-Jorge Miguel Pérez Utrera \n
+Jorge Miguel Pérez Utrera y
 Marcos Sánchez Hernández
