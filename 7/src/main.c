@@ -342,7 +342,7 @@ static int password_right(fsm_t* fsm){
 }
 
 static int presence(fsm_t* fsm){
-    return (GPIO_INPUT_GET(12));
+    return !(GPIO_INPUT_GET(12));
 }
 
 
@@ -368,13 +368,13 @@ void task_alarm_digit(void* ignore)
     portTickType xLastWakeTime;
     GPIO_ConfigTypeDef io_conf;
 
-    io_conf.GPIO_IntrType = GPIO_PIN_INTR_POSEDGE;
+    io_conf.GPIO_IntrType = GPIO_PIN_INTR_NEGEDGE;
     io_conf.GPIO_Mode = GPIO_Mode_Input;
     io_conf.GPIO_Pin = BIT(12);
-    io_conf.GPIO_Pullup = GPIO_PullUp_DIS;
+    io_conf.GPIO_Pullup = GPIO_PullUp_EN;
     gpio_config(&io_conf);
 
-    io_conf.GPIO_IntrType = GPIO_PIN_INTR_POSEDGE;
+    io_conf.GPIO_IntrType = GPIO_PIN_INTR_NEGEDGE;
     io_conf.GPIO_Mode = GPIO_Mode_Input;
     io_conf.GPIO_Pin = BIT(BUTTON);
     io_conf.GPIO_Pullup = GPIO_PullUp_EN;
@@ -392,8 +392,10 @@ void task_alarm_digit(void* ignore)
     xLastWakeTime = xTaskGetTickCount ();
 
     while(true) {
+
     	fsm_fire (fsm_digit);
         fsm_fire (fsm_alarm);
+
 		vTaskDelayUntil(&xLastWakeTime, PERIOD_TICK);
     }
 
