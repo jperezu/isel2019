@@ -3,47 +3,51 @@
 #include "gpio.h"
 #include "fsm.h"
 
-#define DEBUG 1
-#define ALARM 2
-#define BUTTON 14
+#define LED 2
 #define PERIOD_TICK 100/portTICK_RATE_MS
+#define TIMEOUT_MAX 1000/portTICK_RATE_MS
 #define REBOUND_TICK 200/portTICK_RATE_MS
 
 #define ETS_GPIO_INTR_ENABLE()  _xt_isr_unmask(1 << ETS_GPIO_INUM)  //ENABLE INTERRUPTS
 #define ETS_GPIO_INTR_DISABLE() _xt_isr_mask(1 << ETS_GPIO_INUM)    //DISABLE INTERRUPTS
 
+volatile int pressed = 0;
+
 
 typedef enum fsm_state {
-	DISARMED,
-	ARMED,
-}alarm_fsm_state_t;
+	LED_OFF,
+	LED_ON,
+}led_fsm_state_t;
 
 
-typedef struct alarm_fsm_{
+typedef struct led_fsm_{
 	fsm_t fsm;	
-	int alarm;			
-}alarm_fsm_t;
+	int led;
+    int timeout_time;			
+}led_fsm_t;
 
-alarm_fsm_t* new_alarm_fsm(fsm_trans_t* alarm_transition_table, int alarm);
-int delete_alarm_fsm(alarm_fsm_t* alarm_fsm);
+void isr_gpio(void* arg);
+
+led_fsm_t* new_led_fsm(fsm_trans_t* led_transition_table, int led);
+int delete_led_fsm(led_fsm_t* led_fsm);
 
 ///////FSM TABLE FUNCTIONS//////
 //CONDITION FUNCTIONS
-static int btn_high(fsm_t* fsm);
-static int btn_low(fsm_t* fsm);
+static int btn_pressed(fsm_t* fsm);
+static int timeout(fsm_t* fsm);
 static int presence(fsm_t* fsm);
 
 //OUTPUT FUNCTIONS
-static void clear(fsm_t* fsm);
-static void alarm_on(fsm_t* fsm);
+static void led_on(fsm_t* fsm);
+static void led_off(fsm_t* fsm);
 
 // State Machine: transition table
 // { OrigState, TriggerCondition, NextState, OutputFunction }
-fsm_trans_t alarm_transition_table[] = {
-    {DISARMED, btn_high, ARMED, clear },
-	{ARMED, btn_low, DISARMED, clear },
-    {ARMED, presence, ARMED, alarm_on },
-	{-1, NULL, -1, NULL },
+fsm_trans_t led_transition_table[] = {
+		{LED_OFF, btn_pressed, LED_ON, led_on },
+        {LED_OFF, presence, LED_ON, led_on },
+		{LED_ON, timeout, LED_OFF, led_off },
+		{-1, NULL, -1, NULL },
 };
 
 /******************************************************************************
@@ -89,75 +93,101 @@ uint32 user_rf_cal_sector_set(void)
     return rf_cal_sec;
 }
 
-/////ALARM FSM object functions//////
-alarm_fsm_t* new_alarm_fsm(fsm_trans_t* alarm_transition_table, int alarm){
-	alarm_fsm_t* new_alarm_fsm = (alarm_fsm_t*) malloc(sizeof(alarm_fsm_t));
 
-    if(new_alarm_fsm != NULL){
-		new_alarm_fsm-> fsm.current_state = DISARMED;
-		new_alarm_fsm-> fsm.tt = alarm_transition_table;//Herencia
-		new_alarm_fsm-> alarm = alarm;
-	}
-    
-    clear((fsm_t*) new_alarm_fsm);
-	return new_alarm_fsm;
+void isr_gpio(void* arg) {
+  static portTickType xLastISRTick0 = 0;
+
+  uint32 status = GPIO_REG_READ(GPIO_STATUS_ADDRESS);          //READ STATUS OF INTERRUPT
+
+  portTickType now = xTaskGetTickCount ();
+  if (status & BIT(0) || status & BIT(15)) {
+    if (now > xLastISRTick0) {
+      pressed = 1;
+    }
+    xLastISRTick0 = now + REBOUND_TICK;
+  }
+
+  //should not add print in interruption, except that we want to debug something
+  //printf("in io intr: 0X%08x\r\n",status);                    //WRITE ON SERIAL UART0
+  GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, status);       //CLEAR THE STATUS IN THE W1 INTERRUPT REGISTER
 }
 
-int delete_alarm_fsm(alarm_fsm_t* alarm_fsm){
-	free(alarm_fsm);
+/////LED FSM object functions//////
+led_fsm_t* new_led_fsm(fsm_trans_t* led_transition_table, int led){
+	led_fsm_t* new_led_fsm = (led_fsm_t*) malloc(sizeof(led_fsm_t));
+
+    if(new_led_fsm != NULL){
+		new_led_fsm-> fsm.current_state = LED_OFF;
+		new_led_fsm-> fsm.tt = led_transition_table;//Herencia
+		new_led_fsm-> led = led;
+        new_led_fsm -> timeout_time = xTaskGetTickCount () + TIMEOUT_MAX;
+	}
+    
+    led_off((fsm_t*) new_led_fsm);
+	return new_led_fsm;
+}
+
+int delete_led_fsm(led_fsm_t* led_fsm){
+	free(led_fsm);
 	return 1;
 }
 
 ///////FSM TABLE FUNCTIONS//////
 //CONDITION FUNCTIONS
-static int btn_high(fsm_t* fsm){
-    return GPIO_INPUT_GET(BUTTON);
+static int btn_pressed(fsm_t* fsm){
+    return pressed;
 }
-static int btn_low(fsm_t* fsm){
-    return !GPIO_INPUT_GET(BUTTON);
+
+static int timeout(fsm_t* fsm){
+    led_fsm_t* led_fsm = (led_fsm_t*) fsm;
+    if (xTaskGetTickCount () >= led_fsm -> timeout_time) {
+        return 1;
+    }
+    return 0;
 }
+
 static int presence(fsm_t* fsm){
     return !(GPIO_INPUT_GET(12));
 }
 
-
 //OUTPUT FUNCTIONS
-static void clear(fsm_t* fsm){
-    alarm_fsm_t* alarm_fsm = (alarm_fsm_t*) fsm;
-    GPIO_OUTPUT_SET(alarm_fsm -> alarm, 1);
+static void led_on(fsm_t* fsm){
+    led_fsm_t* led_fsm = (led_fsm_t*) fsm;
+    led_fsm -> timeout_time = xTaskGetTickCount () + TIMEOUT_MAX;   
+    pressed = 0;
+    GPIO_OUTPUT_SET(led_fsm -> led, 0);
 }
 
-static void alarm_on(fsm_t* fsm){
-    alarm_fsm_t* alarm_fsm = (alarm_fsm_t*) fsm;
-    GPIO_OUTPUT_SET(alarm_fsm -> alarm, 0);
+static void led_off(fsm_t* fsm){
+    led_fsm_t* led_fsm = (led_fsm_t*) fsm;
+    pressed = 0;
+    GPIO_OUTPUT_SET(led_fsm -> led, 1);
 }
 
-// MAIN
-void task_alarm(void* ignore)
+
+void task_led(void* ignore)
 {   
     portTickType xLastWakeTime;
     GPIO_ConfigTypeDef io_conf;
 
-    io_conf.GPIO_IntrType = GPIO_PIN_INTR_POSEDGE;
+    io_conf.GPIO_IntrType = GPIO_PIN_INTR_NEGEDGE;
     io_conf.GPIO_Mode = GPIO_Mode_Input;
     io_conf.GPIO_Pin = BIT(12);
     io_conf.GPIO_Pullup = GPIO_PullUp_EN;
     gpio_config(&io_conf);
 
-    io_conf.GPIO_IntrType = GPIO_PIN_INTR_POSEDGE;
-    io_conf.GPIO_Mode = GPIO_Mode_Input;
-    io_conf.GPIO_Pin = BIT(BUTTON);
-    io_conf.GPIO_Pullup = GPIO_PullUp_EN;
-    gpio_config(&io_conf);
+    PIN_FUNC_SELECT(GPIO_PIN_REG_15, FUNC_GPIO15);
 
-    fsm_t* fsm = (fsm_t*) new_alarm_fsm(alarm_transition_table, ALARM);
+    gpio_intr_handler_register((void*)isr_gpio, NULL);
+    gpio_pin_intr_state_set(0, GPIO_PIN_INTR_NEGEDGE);
+    gpio_pin_intr_state_set(15, GPIO_PIN_INTR_POSEDGE);
+    ETS_GPIO_INTR_ENABLE();
+
+    fsm_t* fsm = (fsm_t*) new_led_fsm(led_transition_table, LED);
     xLastWakeTime = xTaskGetTickCount ();
 
     while(true) {
     	fsm_fire (fsm);
-        if (DEBUG)
-            printf("BOTON: %d PRESENCIA: %d ESTADO: %d\n",
-                    GPIO_INPUT_GET(14), !GPIO_INPUT_GET(12), fsm->current_state);
 		vTaskDelayUntil(&xLastWakeTime, PERIOD_TICK);
     }
 
@@ -172,6 +202,6 @@ void task_alarm(void* ignore)
 *******************************************************************************/
 void user_init(void)
 {
-    xTaskCreate(&task_alarm, "fsm", 2048, NULL, 1, NULL);
+    xTaskCreate(&task_led, "fsm", 2048, NULL, 1, NULL);
 }
 
