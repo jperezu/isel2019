@@ -24,8 +24,8 @@ volatile int digit = 1;
 typedef enum fsm_state_digit {
     NONE,
     ZERO,
-	ONE,
-	TWO,
+    ONE,
+    TWO,
     THREE,
     FOUR,
     FIVE,
