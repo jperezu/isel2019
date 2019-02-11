@@ -61,6 +61,7 @@ void task_morse(void* ignore){
 
     str2morse (buf, N_CHARACTERS, msg);
     printf("%s  --> %s\n", msg, buf);
+    vTaskDelay(1000 /portTICK_RATE_MS);
     morse_send (buf);
 
     free(buf);
