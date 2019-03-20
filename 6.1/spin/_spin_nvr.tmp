@@ -1,0 +1,21 @@
+never spec {    /* !((([] ((! (((state==DISARMED)) && ((button==1)))) || (<> ((state==ARMED))))) && ([] ((! (((state==ARMED)) && ((presence==1)))) || (<> ((alarm==1)))))) && ([] ((! (((state==ARMED)) && ((button==0)))) || (<> (((state==DISARMED)) && ((alarm==0))))))) */
+T0_init:
+	do
+	:: (! ((! (((state==DISARMED)) && ((button==1))))) && ! (((state==ARMED)))) -> goto accept_S6
+	:: (! ((! (((state==ARMED)) && ((presence==1))))) && ! (((alarm==1)))) -> goto accept_S11
+	:: (! ((! (((state==ARMED)) && ((button==0))))) && ! ((((state==DISARMED)) && ((alarm==0))))) -> goto accept_S16
+	:: (1) -> goto T0_init
+	od;
+accept_S6:
+	do
+	:: (! (((state==ARMED)))) -> goto accept_S6
+	od;
+accept_S11:
+	do
+	:: (! (((alarm==1)))) -> goto accept_S11
+	od;
+accept_S16:
+	do
+	:: (! ((((state==DISARMED)) && ((alarm==0))))) -> goto accept_S16
+	od;
+}

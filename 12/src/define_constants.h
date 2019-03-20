@@ -23,9 +23,15 @@
 #define TIMEOUT_MAX 1000/portTICK_RATE_MS
 #define TIMEOUT_LIGHT_MAX 1000/portTICK_RATE_MS
 
+#define HYPERPERIOD 1000
+#define SECONDARY 100
+
 #define ETS_GPIO_INTR_ENABLE()  _xt_isr_unmask(1 << ETS_GPIO_INUM)  //ENABLE INTERRUPTS
 #define ETS_GPIO_INTR_DISABLE() _xt_isr_mask(1 << ETS_GPIO_INUM)    //DISABLE INTERRUPTS
 
 volatile int pressed;
+volatile int presence_flag;
+volatile int pressed_switch;
+volatile int presence_alarm;
 
 #endif /* DEFINE_CONSTANTS_H */
