@@ -1,5 +1,5 @@
 MODELS = model
-model_SPEC = spec_alarm spec_code spec_light
+model_SPEC = spec_state spec_alarm_on spec_alarm_off spec_code spec_light
 model_PANARGS = -m100000
 
 all: $(patsubst %, %.verify, $(MODELS))
