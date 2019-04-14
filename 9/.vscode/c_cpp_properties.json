@@ -1,6 +1,8 @@
 {
-    "!!! WARNING !!!": "PLEASE DO NOT MODIFY THIS FILE! USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags",
     "configurations": [
+        {
+            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
+        },
         {
             "name": "Win32",
             "includePath": [
@@ -44,10 +46,10 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=30604",
+                "PLATFORMIO=30606",
                 "ESP8266",
                 "ARDUINO_ARCH_ESP8266",
-                "ESP8266_WEMOS_D1MINI",
+                "ARDUINO_ESP8266_WEMOS_D1MINI",
                 "F_CPU=80000000L",
                 "__ets__",
                 "ICACHE_FLASH",
@@ -58,6 +60,5 @@
             "cppStandard": "c++11",
             "compilerPath": "C:/Users/Jorge/.platformio/packages/toolchain-xtensa/bin/xtensa-lx106-elf-gcc.exe -mlongcalls -mtext-section-literals"
         }
-    ],
-    "version": 4
+    ]
 }

@@ -1,0 +1,38 @@
+#ifndef DEFINE_CONSTANTS_H_
+#define DEFIINE_CONSTANTS_H_
+
+#include "esp_common.h"
+#include "freertos/task.h"
+#include "gpio.h"
+
+#define DEBUG 1
+
+#define DIG1 1
+#define DIG2 1
+#define DIG3 1
+
+#define ALARM 13
+#define LED 2
+#define IR_SENSOR 12
+#define BUTTON 14
+#define SWITCH_1 0
+#define SWITCH_2 15
+
+#define PERIOD_TICK 100/portTICK_RATE_MS
+#define REBOUND_TICK 200/portTICK_RATE_MS
+#define TIMEOUT_MAX 1000/portTICK_RATE_MS
+#define TIMEOUT_LIGHT_MAX 1000/portTICK_RATE_MS
+
+#define HYPERPERIOD 1000
+#define SECONDARY 100
+
+#define ETS_GPIO_INTR_ENABLE()  _xt_isr_unmask(1 << ETS_GPIO_INUM)  //ENABLE INTERRUPTS
+#define ETS_GPIO_INTR_DISABLE() _xt_isr_mask(1 << ETS_GPIO_INUM)    //DISABLE INTERRUPTS
+
+volatile int pressed;
+volatile int presence_flag;
+volatile int pressed_switch;
+volatile int presence_alarm;
+volatile int done;
+
+#endif /* DEFINE_CONSTANTS_H */
