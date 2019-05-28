@@ -1,9 +1,12 @@
 RETO - ISEL
 
-Jorge Miguel Pérez Utrera\n
-Marcos Sanchez Herández\n
-Julián Chichón Gutiérrez\n
-Alberto Tato Gómez\n
+Jorge Miguel Pérez Utrera
+
+Marcos Sanchez Herández
+
+Julián Chichón Gutiérrez
+
+Alberto Tato Gómez
 
 Implementación básica basada en las especificaciones propuestas para el reto:
 
